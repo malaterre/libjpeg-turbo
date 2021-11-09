@@ -612,6 +612,7 @@ do_flatten(j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
   int ci, offset_y, dc_left_value, dc_right_value, average;
   JBLOCKARRAY buffer;
   jpeg_component_info *compptr;
+  int average3[] = {-1024, 0, 0 };
 
   for (ci = 0; ci < dstinfo->num_components; ci++) {
     compptr = dstinfo->comp_info + ci;
@@ -627,6 +628,8 @@ do_flatten(j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
          (JDIMENSION)compptr->v_samp_factor, TRUE);
       for (offset_y = 0; offset_y < compptr->v_samp_factor; offset_y++) {
         MEMZERO(buffer[offset_y] + x_wipe_blocks, wipe_width * sizeof(JBLOCK));
+        average = average3[ci];
+#if 0
         if (x_wipe_blocks > 0) {
           dc_left_value = buffer[offset_y][x_wipe_blocks - 1][0];
           if (wipe_right < compptr->width_in_blocks) {
@@ -638,6 +641,7 @@ do_flatten(j_decompress_ptr srcinfo, j_compress_ptr dstinfo,
         } else if (wipe_right < compptr->width_in_blocks) {
           average = buffer[offset_y][wipe_right][0];
         } else continue;
+#endif
         for (blk_x = x_wipe_blocks; blk_x < wipe_right; blk_x++) {
           buffer[offset_y][blk_x][0] = (JCOEF)average;
         }
